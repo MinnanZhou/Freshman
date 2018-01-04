@@ -1,0 +1,35 @@
+import scrapy
+from ..items import NbaStandingsItem
+class hupuspider(scrapy.Spider):
+    name = "hupu"
+    start_urls = ['https://nba.hupu.com/standings']
+
+    def parse(self, response):
+        print(response)
+        hp = NbaStandingsItem()
+        team_list = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[2]/td[2]/text()').extract() +response.xpath('//*[@class="left"]/a/text()').extract()
+        win = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[3]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[3]/text()').extract()
+        loss = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[4]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[4]/text()').extract()
+        win_rate = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[5]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[5]/text()').extract()
+        victories = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[6]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[6]/text()').extract()
+        home = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[7]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[7]/text()').extract()
+        guest = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[8]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[8]/text()').extract()
+        zone = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[9]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[9]/text()').extract()
+        points = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[11]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[11]/text()').extract()
+        points_against = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[12]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[12]/text()').extract()
+        net = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[13]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[13]/text()').extract()
+        streak = response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()<18]/td[14]/text()').extract() + response.xpath('//*[@id="rank_js"]/div[4]/div[2]/table/tbody/tr[position()>19]/td[14]/text()').extract()
+        for i,j,k,l,m,n,o,p,q,r,s,t, in zip(team_list, win, loss, win_rate, victories, home, guest,zone, points, points_against, net, streak):
+            hp['team_list'] = i
+            hp['win'] = j
+            hp['loss'] = k
+            hp['win_rate'] = l
+            hp['victories'] = m
+            hp['home'] = n
+            hp['guest'] = o
+            hp['zone'] = p
+            hp['points'] = q
+            hp['points_against'] = r
+            hp['net'] = s
+            hp['streak'] = t
+            yield hp
